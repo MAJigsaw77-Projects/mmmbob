@@ -4,6 +4,7 @@ import flash.events.Event;
 import openfl.Lib;
 import Section.SwagSection;
 import Song.SwagSong;
+import Shaders.PulseEffect;
 import WiggleEffect.WiggleEffectType;
 import flixel.FlxBasic;
 import flixel.FlxCamera;
@@ -75,6 +76,9 @@ class PlayState extends MusicBeatState
 	var halloweenLevel:Bool = false;
 
 	var songLength:Float = 0;
+
+	var bitch:FlxSprite;
+	var shaderthing:PulseEffect = new PulseEffect();
 	
 	#if windows
 	// Discord RPC variables
@@ -756,6 +760,13 @@ class PlayState extends MusicBeatState
 				ground.active = false;
 				ground.antialiasing = true;
 				add(ground);
+
+				var FUCKINGSHADERBITCH:Shaders.GlitchEffect = new Shaders.GlitchEffect();
+				FUCKINGSHADERBITCH.waveAmplitude = 0.1;
+				FUCKINGSHADERBITCH.waveFrequency = 5;
+				FUCKINGSHADERBITCH.waveSpeed = 2;
+				bg.shader = FUCKINGSHADERBITCH.shader;
+				bitch = bg;
 				
 			}
 			case 'trouble' :
@@ -2138,6 +2149,16 @@ class PlayState extends MusicBeatState
 		#if !debug
 		perfectMode = false;
 		#end
+		if(bitch != null)
+		{
+			if(bitch.active)
+			{
+				var fortniteballs = cast(bitch.shader, Shaders.GlitchShader);
+				fortniteballs.uTime.value[0] += elapsed;
+			}
+		}
+		FlxG.camera.setFilters([new ShaderFilter(shaderthing.shader)]);
+		shaderthing.shader.uTime.value[0] += elapsed;
 		if (currentFrames == FlxG.save.data.fpsCap)
 		{
 			for(i in 0...notesHitArray.length)
